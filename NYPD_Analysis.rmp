@@ -1,0 +1,876 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrieve NYPD_Complaint_Data_Current__Year_To_Date__20241106" width="90" x="45" y="34">
+        <parameter key="repository_entry" value="../data/NYPD_Complaint_Data_Current__Year_To_Date__20241106"/>
+      </operator>
+      <operator activated="true" class="filter_examples" compatibility="10.5.000" expanded="true" height="103" name="Filter Examples" width="90" x="179" y="34">
+        <parameter key="parameter_expression" value=""/>
+        <parameter key="condition_class" value="custom_filters"/>
+        <parameter key="invert_filter" value="false"/>
+        <list key="filters_list">
+          <parameter key="filters_entry_key" value="CMPLNT_FR_DT.ge.01/01/2024"/>
+        </list>
+        <parameter key="filters_logic_and" value="true"/>
+        <parameter key="filters_check_metadata" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Filter Examples &lt;br/&gt;&lt;br/&gt;To select the 2024 year data.</description>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="10.5.000" expanded="true" height="103" name="Preprocessing" width="90" x="313" y="34">
+        <process expanded="true">
+          <operator activated="true" class="blending:rename" compatibility="10.5.000" expanded="true" height="82" name="Rename" width="90" x="45" y="34">
+            <list key="rename attributes">
+              <parameter key="ADDR_PCT_CD" value="Precinct_Code"/>
+              <parameter key="BORO_NM" value="Borough"/>
+              <parameter key="CMPLNT_FR_DT" value="Start_Date"/>
+              <parameter key="CMPLNT_FR_TM" value="Start_Time"/>
+              <parameter key="CMPLNT_TO_DT" value="End_Date"/>
+              <parameter key="CMPLNT_TO_TM" value="End_Time"/>
+              <parameter key="CRM_ATPT_CPTD_CD" value="Crime_Completion_Status"/>
+              <parameter key="JURISDICTION_CODE" value="Jurisdiction_Code"/>
+              <parameter key="JURIS_DESC" value="Jurisdiction_Description"/>
+              <parameter key="KY_CD" value="Offense_Code"/>
+              <parameter key="LAW_CAT_CD" value="Offense_Level"/>
+              <parameter key="LOC_OF_OCCUR_DESC" value="Location_Context"/>
+              <parameter key="OFNS_DESC" value="Offense_Description"/>
+              <parameter key="PATROL_BORO" value="Patrol_Borough "/>
+              <parameter key="PD_CD" value="Internal_Offense_Code"/>
+              <parameter key="PD_DESC" value="Internal_Offense_Description"/>
+              <parameter key="PREM_TYP_DESC" value="Premises_Type"/>
+              <parameter key="RPT_DT" value="Report_Date"/>
+              <parameter key="SUSP_AGE_GROUP" value="Suspect_Age_Group"/>
+              <parameter key="SUSP_RACE" value="Suspect_Race"/>
+              <parameter key="SUSP_SEX" value="Suspect_Sex"/>
+              <parameter key="VIC_AGE_GROUP" value="Victim_Age_Group"/>
+              <parameter key="VIC_RACE" value="Victim_Race"/>
+              <parameter key="VIC_SEX" value="Victim_Sex"/>
+              <parameter key="X_COORD_CD" value="X_Coordinate"/>
+              <parameter key="Y_COORD_CD" value="Y_Coordinate"/>
+              <parameter key="Latitude" value="Latitude"/>
+              <parameter key="Longitude" value="Longitude"/>
+              <parameter key="New Georeferenced Column" value="Geolocation"/>
+            </list>
+            <parameter key="from_attribute" value=""/>
+            <parameter key="to_attribute" value=""/>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes" width="90" x="179" y="34">
+            <parameter key="type" value="exclude attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="CMPLNT_NUM␞End_Date␞End_Time␞Geolocation␞HADEVELOPT␞HOUSING_PSA␞Internal_Offense_Code␞Internal_Offense_Description␞Jurisdiction_Code␞Location_Context␞Offense_Code␞PARKS_NM␞Premises_Type␞STATION_NAME␞Suspect_Age_Group␞Suspect_Race␞Suspect_Sex␞TRANSIT_DISTRICT␞X_Coordinate␞Y_Coordinate␞Lat_Lon"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Select Attribute&lt;br/&gt;&lt;br/&gt;The Attribute which are removed have lots of missing values or not relevent to the data.</description>
+          </operator>
+          <operator activated="true" class="sample" compatibility="10.5.000" expanded="true" height="82" name="Sample" width="90" x="313" y="34">
+            <parameter key="sample" value="absolute"/>
+            <parameter key="balance_data" value="false"/>
+            <parameter key="sample_size" value="10000"/>
+            <parameter key="sample_ratio" value="0.1"/>
+            <parameter key="sample_probability" value="0.1"/>
+            <list key="sample_size_per_class"/>
+            <list key="sample_ratio_per_class"/>
+            <list key="sample_probability_per_class"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+          </operator>
+          <operator activated="true" class="blending:generate_id" compatibility="10.5.000" expanded="true" height="82" name="Generate ID" width="90" x="447" y="34">
+            <parameter key="create_nominal_ids" value="false"/>
+            <parameter key="offset" value="0"/>
+          </operator>
+          <operator activated="true" class="blending:set_role" compatibility="10.5.000" expanded="true" height="82" name="Set Role" width="90" x="581" y="34">
+            <list key="set_roles">
+              <parameter key="id" value="id"/>
+              <parameter key="Offense_Level" value="label"/>
+            </list>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply (3)" width="90" x="715" y="34"/>
+          <operator activated="true" class="date_to_numerical" compatibility="10.5.000" expanded="true" height="82" name="Date to Numerical (For Start_Date)" width="90" x="849" y="34">
+            <parameter key="attribute_name" value="Start_Date"/>
+            <parameter key="time_unit" value="day"/>
+            <parameter key="millisecond_relative_to" value="second"/>
+            <parameter key="second_relative_to" value="minute"/>
+            <parameter key="minute_relative_to" value="hour"/>
+            <parameter key="hour_relative_to" value="day"/>
+            <parameter key="day_relative_to" value="week"/>
+            <parameter key="week_relative_to" value="year"/>
+            <parameter key="month_relative_to" value="year"/>
+            <parameter key="quarter_relative_to" value="year"/>
+            <parameter key="half_year_relative_to" value="year"/>
+            <parameter key="year_relative_to" value="era"/>
+            <parameter key="keep_old_attribute" value="false"/>
+          </operator>
+          <operator activated="true" class="date_to_numerical" compatibility="10.5.000" expanded="true" height="82" name="Date to Numerical (For Report_Date))" width="90" x="983" y="34">
+            <parameter key="attribute_name" value="Report_Date"/>
+            <parameter key="time_unit" value="day"/>
+            <parameter key="millisecond_relative_to" value="second"/>
+            <parameter key="second_relative_to" value="minute"/>
+            <parameter key="minute_relative_to" value="hour"/>
+            <parameter key="hour_relative_to" value="day"/>
+            <parameter key="day_relative_to" value="week"/>
+            <parameter key="week_relative_to" value="year"/>
+            <parameter key="month_relative_to" value="year"/>
+            <parameter key="quarter_relative_to" value="year"/>
+            <parameter key="half_year_relative_to" value="year"/>
+            <parameter key="year_relative_to" value="era"/>
+            <parameter key="keep_old_attribute" value="false"/>
+          </operator>
+          <operator activated="true" class="numerical_to_polynominal" compatibility="10.5.000" expanded="true" height="82" name="Numerical to Polynominal" width="90" x="1117" y="34">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value="Precinct_Code"/>
+            <parameter key="attributes" value="|Precinct_Code|Report_Date|Start_Date"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="numeric"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="real"/>
+            <parameter key="block_type" value="value_series"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_series_end"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="replace_missing_values" compatibility="10.5.000" expanded="true" height="103" name="Replace Missing Values" width="90" x="1251" y="34">
+            <parameter key="return_preprocessing_model" value="false"/>
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value="Start_Date"/>
+            <parameter key="attributes" value="Report_Date|Start_Date"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="true"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="default" value="average"/>
+            <list key="columns"/>
+          </operator>
+          <operator activated="true" class="remove_duplicates" compatibility="10.5.000" expanded="true" height="103" name="Remove Duplicates" width="90" x="1385" y="34">
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="treat_missing_values_as_duplicates" value="false"/>
+          </operator>
+          <operator activated="true" class="map" compatibility="10.5.000" expanded="true" height="82" name="Map" width="90" x="1519" y="34">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value="Borough"/>
+            <parameter key="attributes" value="Borough|Victim_Age_Group|Victim_Race"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <list key="value_mappings">
+              <parameter key="(null)" value="BROOKLYN"/>
+              <parameter key="-965" value="UNKNOWN"/>
+              <parameter key="(null)" value="UNKNOWN"/>
+            </list>
+            <parameter key="consider_regular_expressions" value="false"/>
+            <parameter key="add_default_mapping" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Map&lt;br&gt;&lt;br&gt;Borough, Victim_Age_Group and Victim_Race have some (null) values which is replaced by the mode value of that attribute.</description>
+          </operator>
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes" width="90" x="1653" y="34">
+            <list key="function_descriptions">
+              <parameter key="AgeGroup_Victim" value="if ((Victim_Age_Group == &quot;&lt;18&quot;), &quot;Child&quot;,&#10;if ((Victim_Age_Group == &quot;18-24&quot;), &quot;Young Adult&quot;,&#10;if ((Victim_Age_Group == &quot;25-44&quot;), &quot;Adult&quot;,&#10;if ((Victim_Age_Group == &quot;45-64&quot;) , &quot;Middle-aged Adult&quot;,&#10;if ((Victim_Age_Group == &quot;65+&quot;) , &quot;Senior&quot;, &quot;Unknown&quot;)))))"/>
+              <parameter key="Time_Group" value="if (Start_Time &gt;= &quot;00:00:00&quot; &amp;&amp; Start_Time &lt; &quot;05:00:00&quot;, &quot;Late Night&quot;,&#10;if (Start_Time &gt;= &quot;05:00:00&quot; &amp;&amp; Start_Time &lt; &quot;12:00:00&quot;, &quot;Morning&quot;,&#10;if (Start_Time &gt;= &quot;12:00:00&quot; &amp;&amp; Start_Time &lt; &quot;17:00:00&quot;, &quot;Afternoon&quot;,&#10;if (Start_Time &gt;= &quot;17:00:00&quot; &amp;&amp; Start_Time &lt; &quot;21:00:00&quot;, &quot;Evening&quot;,&#10;if (Start_Time &gt;= &quot;21:00:00&quot; &amp;&amp; Start_Time &lt;= &quot;23:59:59&quot;, &quot;Night&quot;,&quot;Error&quot;)))))"/>
+              <parameter key="Location" value="if((Latitude &gt;= 40.50 &amp;&amp; Latitude &lt; 40.55) &amp;&amp; (Longitude &gt;= -74.25 &amp;&amp; Longitude &lt; -74.20), &quot;Group1&quot;,&#10;if((Latitude &gt;= 40.50 &amp;&amp; Latitude &lt; 40.55) &amp;&amp; (Longitude &gt;= -74.20 &amp;&amp; Longitude &lt; -74.15), &quot;Group2&quot;,&#10;if((Latitude &gt;= 40.50 &amp;&amp; Latitude &lt; 40.55) &amp;&amp; (Longitude &gt;= -74.15 &amp;&amp; Longitude &lt; -74.10), &quot;Group3&quot;,&#10;if((Latitude &gt;= 40.50 &amp;&amp; Latitude &lt; 40.55) &amp;&amp; (Longitude &gt;= -74.10 &amp;&amp; Longitude &lt;= -73.80), &quot;Group4&quot;,&#10;&#10;if((Latitude &gt;= 40.55 &amp;&amp; Latitude &lt; 40.60) &amp;&amp; (Longitude &gt;= -74.25 &amp;&amp; Longitude &lt; -74.20), &quot;Group5&quot;,&#10;if((Latitude &gt;= 40.55 &amp;&amp; Latitude &lt; 40.60) &amp;&amp; (Longitude &gt;= -74.20 &amp;&amp; Longitude &lt; -74.15), &quot;Group6&quot;,&#10;if((Latitude &gt;= 40.55 &amp;&amp; Latitude &lt; 40.60) &amp;&amp; (Longitude &gt;= -74.15 &amp;&amp; Longitude &lt; -74.10), &quot;Group7&quot;,&#10;if((Latitude &gt;= 40.55 &amp;&amp; Latitude &lt; 40.60) &amp;&amp; (Longitude &gt;= -74.10 &amp;&amp; Longitude &lt;= -73.80), &quot;Group8&quot;,&#10;&#10;if((Latitude &gt;= 40.60 &amp;&amp; Latitude &lt; 40.65) &amp;&amp; (Longitude &gt;= -74.25 &amp;&amp; Longitude &lt; -74.20), &quot;Group9&quot;,&#10;if((Latitude &gt;= 40.60 &amp;&amp; Latitude &lt; 40.65) &amp;&amp; (Longitude &gt;= -74.20 &amp;&amp; Longitude &lt; -74.15), &quot;Group10&quot;,&#10;if((Latitude &gt;= 40.60 &amp;&amp; Latitude &lt; 40.65) &amp;&amp; (Longitude &gt;= -74.15 &amp;&amp; Longitude &lt; -74.10), &quot;Group11&quot;,&#10;if((Latitude &gt;= 40.60 &amp;&amp; Latitude &lt; 40.65) &amp;&amp; (Longitude &gt;= -74.10 &amp;&amp; Longitude &lt;= -73.80), &quot;Group12&quot;,&#10;&#10;if((Latitude &gt;= 40.65 &amp;&amp; Latitude &lt; 40.70) &amp;&amp; (Longitude &gt;= -74.25 &amp;&amp; Longitude &lt; -74.20), &quot;Group13&quot;,&#10;if((Latitude &gt;= 40.65 &amp;&amp; Latitude &lt; 40.70) &amp;&amp; (Longitude &gt;= -74.20 &amp;&amp; Longitude &lt; -74.15), &quot;Group14&quot;,&#10;if((Latitude &gt;= 40.65 &amp;&amp; Latitude &lt; 40.70) &amp;&amp; (Longitude &gt;= -74.15 &amp;&amp; Longitude &lt; -74.10), &quot;Group15&quot;,&#10;if((Latitude &gt;= 40.65 &amp;&amp; Latitude &lt; 40.70) &amp;&amp; (Longitude &gt;= -74.10 &amp;&amp; Longitude &lt;= -73.80), &quot;Group16&quot;,&#10;&#10;if((Latitude &gt;= 40.70 &amp;&amp; Latitude &lt;= 41.00) &amp;&amp; (Longitude &gt;= -74.25 &amp;&amp; Longitude &lt;= -73.80), &quot;Group17&quot;, &quot;Error&quot;)))))))))))))))))"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="America/New_York"/>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (2)" width="90" x="1787" y="34">
+            <parameter key="type" value="exclude attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="Latitude␞Longitude␞Start_Time␞Victim_Age_Group"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+          </operator>
+          <connect from_port="in 1" to_op="Rename" to_port="example set input"/>
+          <connect from_op="Rename" from_port="example set output" to_op="Select Attributes" to_port="example set input"/>
+          <connect from_op="Select Attributes" from_port="example set output" to_op="Sample" to_port="example set input"/>
+          <connect from_op="Sample" from_port="example set output" to_op="Generate ID" to_port="example set input"/>
+          <connect from_op="Generate ID" from_port="example set output" to_op="Set Role" to_port="example set input"/>
+          <connect from_op="Set Role" from_port="example set output" to_op="Multiply (3)" to_port="input"/>
+          <connect from_op="Multiply (3)" from_port="output 1" to_op="Date to Numerical (For Start_Date)" to_port="example set input"/>
+          <connect from_op="Multiply (3)" from_port="output 2" to_port="out 2"/>
+          <connect from_op="Date to Numerical (For Start_Date)" from_port="example set output" to_op="Date to Numerical (For Report_Date))" to_port="example set input"/>
+          <connect from_op="Date to Numerical (For Report_Date))" from_port="example set output" to_op="Numerical to Polynominal" to_port="example set input"/>
+          <connect from_op="Numerical to Polynominal" from_port="example set output" to_op="Replace Missing Values" to_port="example set input"/>
+          <connect from_op="Replace Missing Values" from_port="example set output" to_op="Remove Duplicates" to_port="example set input"/>
+          <connect from_op="Remove Duplicates" from_port="example set output" to_op="Map" to_port="example set input"/>
+          <connect from_op="Map" from_port="example set output" to_op="Generate Attributes" to_port="table input"/>
+          <connect from_op="Generate Attributes" from_port="table output" to_op="Select Attributes (2)" to_port="example set input"/>
+          <connect from_op="Select Attributes (2)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <portSpacing port="sink_out 3" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="166" name="Multiply" width="90" x="447" y="34"/>
+      <operator activated="true" class="subprocess" compatibility="10.5.000" expanded="true" height="82" name="Association" width="90" x="581" y="595">
+        <process expanded="true">
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (7)" width="90" x="45" y="34">
+            <parameter key="type" value="include attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="AgeGroup_Victim␞Borough␞Crime_Completion_Status␞Jurisdiction_Description␞Location␞Offense_Description␞Patrol_Borough ␞Precinct_Code␞Victim_Race␞Victim_Sex"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="true"/>
+          </operator>
+          <operator activated="true" class="nominal_to_binominal" compatibility="10.5.000" expanded="true" height="103" name="Nominal to Binominal" width="90" x="179" y="34">
+            <parameter key="return_preprocessing_model" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="nominal"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="file_path"/>
+            <parameter key="block_type" value="single_value"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="single_value"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="transform_binominal" value="false"/>
+            <parameter key="use_underscore_in_name" value="false"/>
+          </operator>
+          <operator activated="true" class="concurrency:fp_growth" compatibility="10.5.000" expanded="true" height="82" name="FP-Growth" width="90" x="313" y="34">
+            <parameter key="input_format" value="items in dummy coded columns"/>
+            <parameter key="item_separators" value="|"/>
+            <parameter key="use_quotes" value="false"/>
+            <parameter key="quotes_character" value="&quot;"/>
+            <parameter key="escape_character" value="\"/>
+            <parameter key="trim_item_names" value="true"/>
+            <parameter key="min_requirement" value="support"/>
+            <parameter key="min_support" value="0.95"/>
+            <parameter key="min_frequency" value="100"/>
+            <parameter key="min_items_per_itemset" value="1"/>
+            <parameter key="max_items_per_itemset" value="0"/>
+            <parameter key="max_number_of_itemsets" value="1000000"/>
+            <parameter key="find_min_number_of_itemsets" value="true"/>
+            <parameter key="min_number_of_itemsets" value="100"/>
+            <parameter key="max_number_of_retries" value="15"/>
+            <parameter key="requirement_decrease_factor" value="0.9"/>
+            <enumeration key="must_contain_list"/>
+          </operator>
+          <operator activated="true" class="create_association_rules" compatibility="10.5.000" expanded="true" height="82" name="Create Association Rules" width="90" x="447" y="34">
+            <parameter key="criterion" value="confidence"/>
+            <parameter key="min_confidence" value="0.8"/>
+            <parameter key="min_criterion_value" value="0.8"/>
+            <parameter key="gain_theta" value="2.0"/>
+            <parameter key="laplace_k" value="1.0"/>
+          </operator>
+          <connect from_port="in 1" to_op="Select Attributes (7)" to_port="example set input"/>
+          <connect from_op="Select Attributes (7)" from_port="example set output" to_op="Nominal to Binominal" to_port="example set input"/>
+          <connect from_op="Nominal to Binominal" from_port="example set output" to_op="FP-Growth" to_port="example set"/>
+          <connect from_op="FP-Growth" from_port="frequent sets" to_op="Create Association Rules" to_port="item sets"/>
+          <connect from_op="Create Association Rules" from_port="rules" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="10.5.000" expanded="true" height="103" name="Outlier Detection" width="90" x="581" y="34">
+        <process expanded="true">
+          <operator activated="true" class="nominal_to_numerical" compatibility="10.5.000" expanded="true" height="103" name="Nominal to Numerical" width="90" x="45" y="34">
+            <parameter key="return_preprocessing_model" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="nominal"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="file_path"/>
+            <parameter key="block_type" value="single_value"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="single_value"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="coding_type" value="dummy coding"/>
+            <parameter key="use_comparison_groups" value="false"/>
+            <list key="comparison_groups"/>
+            <parameter key="unexpected_value_handling" value="all 0 and warning"/>
+            <parameter key="use_underscore_in_name" value="false"/>
+          </operator>
+          <operator activated="true" class="remove_useless_attributes" compatibility="10.5.000" expanded="true" height="82" name="Remove Useless Attributes" width="90" x="179" y="34">
+            <parameter key="numerical_min_deviation" value="0.0"/>
+            <parameter key="nominal_useless_above" value="1.0"/>
+            <parameter key="nominal_remove_id_like" value="false"/>
+            <parameter key="nominal_useless_below" value="0.0"/>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="124" name="Multiply (4)" width="90" x="313" y="34"/>
+          <operator activated="true" class="anomalydetection:iforest" compatibility="4.1.001" expanded="true" height="82" name="Detect Outlier (Isolation Forest)" width="90" x="313" y="187">
+            <parameter key="number_of_trees" value="100"/>
+            <parameter key="max_leaf_size" value="1"/>
+            <parameter key="bootstrap_ratio" value="0.9"/>
+            <parameter key="use_feature_heuristic" value="true"/>
+            <parameter key="max_features" value="5"/>
+            <parameter key="score_calculation" value="average_path"/>
+          </operator>
+          <operator activated="true" class="anomalydetection:generate_anomaly_flag" compatibility="4.1.001" expanded="true" height="103" name="Generate Outlier Flag (2)" width="90" x="447" y="187">
+            <parameter key="method" value="contamination"/>
+            <parameter key="define_score_column" value="true"/>
+            <parameter key="score_column" value="prediction"/>
+            <parameter key="contamination_threshold" value="0.1"/>
+            <parameter key="manual_threshold" value="1.0"/>
+            <parameter key="zscore_threshold" value="3.0"/>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (3)" width="90" x="447" y="34">
+            <parameter key="type" value="include attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="Borough = BRONX␞Borough = BROOKLYN␞Borough = MANHATTAN␞Borough = QUEENS␞Borough = STATEN ISLAND␞Borough = UNKNOWN␞Crime_Completion_Status = ATTEMPTED␞Crime_Completion_Status = COMPLETED␞id␞Jurisdiction_Description = AMTRACK␞Jurisdiction_Description = CONRAIL␞Jurisdiction_Description = DEPT OF CORRECTIONS␞Jurisdiction_Description = DISTRICT ATTORNEY OFFICE␞Jurisdiction_Description = HEALTH &amp; HOSP CORP␞Jurisdiction_Description = MTA POLICE DEPT␞Jurisdiction_Description = N.Y. HOUSING POLICE␞Jurisdiction_Description = N.Y. POLICE DEPT␞Jurisdiction_Description = N.Y. STATE PARKS␞Jurisdiction_Description = N.Y. STATE POLICE␞Jurisdiction_Description = N.Y. TRANSIT POLICE␞Jurisdiction_Description = N.Y.C. DEPT OF HOMELESS SERVICES␞Jurisdiction_Description = N.Y.C. DEPT OF PROBATION␞Jurisdiction_Description = NEW YORK CITY SHERIFF OFFICE␞Jurisdiction_Description = NYC DEPT ENVIRONMENTAL PROTECTION␞Jurisdiction_Description = NYC PARKS␞Jurisdiction_Description = NYS DEPT TAX AND FINANCE␞Jurisdiction_Description = OTHER␞Jurisdiction_Description = PORT AUTHORITY␞Jurisdiction_Description = TRI-BORO BRDG TUNNL␞Jurisdiction_Description = U.S. PARK POLICE␞Patrol_Borough  = PATROL BORO BKLYN NORTH␞Patrol_Borough  = PATROL BORO BKLYN SOUTH␞Patrol_Borough  = PATROL BORO BRONX␞Patrol_Borough  = PATROL BORO MAN NORTH␞Patrol_Borough  = PATROL BORO MAN SOUTH␞Patrol_Borough  = PATROL BORO QUEENS NORTH␞Patrol_Borough  = PATROL BORO QUEENS SOUTH␞Patrol_Borough  = PATROL BORO STATEN ISLAND␞Victim_Race = AMERICAN INDIAN/ALASKAN NATIVE␞Victim_Race = ASIAN / PACIFIC ISLANDER␞Victim_Race = BLACK␞Victim_Race = BLACK HISPANIC␞Victim_Race = UNKNOWN␞Victim_Race = WHITE␞Victim_Race = WHITE HISPANIC␞Victim_Sex = D␞Victim_Sex = E␞Victim_Sex = F␞Victim_Sex = L␞Victim_Sex = M"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="true"/>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (5)" width="90" x="581" y="187">
+            <parameter key="type" value="include attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="id␞outlier_flag"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="true"/>
+          </operator>
+          <operator activated="true" class="blending:set_role" compatibility="10.5.000" expanded="true" height="82" name="Set Role (2)" width="90" x="715" y="187">
+            <list key="set_roles">
+              <parameter key="id" value="id"/>
+              <parameter key="outlier_flag" value="interpretation"/>
+            </list>
+          </operator>
+          <operator activated="true" class="blending:rename" compatibility="10.5.000" expanded="true" height="82" name="Rename (2)" width="90" x="849" y="187">
+            <list key="rename attributes">
+              <parameter key="outlier_flag" value="ISF_Outlier"/>
+            </list>
+            <parameter key="from_attribute" value=""/>
+            <parameter key="to_attribute" value=""/>
+          </operator>
+          <operator activated="true" class="detect_outlier_lof" compatibility="10.5.000" expanded="true" height="82" name="Detect Outlier (LOF)" width="90" x="581" y="34">
+            <parameter key="minimal_points_lower_bound" value="10"/>
+            <parameter key="minimal_points_upper_bound" value="20"/>
+            <parameter key="distance_function" value="euclidian distance"/>
+          </operator>
+          <operator activated="true" class="anomalydetection:generate_anomaly_flag" compatibility="4.1.001" expanded="true" height="103" name="Generate Outlier Flag" width="90" x="715" y="34">
+            <parameter key="method" value="contamination"/>
+            <parameter key="define_score_column" value="true"/>
+            <parameter key="score_column" value="outlier"/>
+            <parameter key="contamination_threshold" value="0.1"/>
+            <parameter key="manual_threshold" value="1.0"/>
+            <parameter key="zscore_threshold" value="3.0"/>
+          </operator>
+          <operator activated="true" class="blending:set_role" compatibility="10.5.000" expanded="true" height="82" name="Set Role (3)" width="90" x="849" y="34">
+            <list key="set_roles">
+              <parameter key="id" value="id"/>
+            </list>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (4)" width="90" x="983" y="34">
+            <parameter key="type" value="include attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value=""/>
+            <parameter key="select_subset" value="outlier_flag␞id"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="true"/>
+          </operator>
+          <operator activated="true" class="concurrency:join" compatibility="10.5.000" expanded="true" height="82" name="Join" width="90" x="983" y="187">
+            <parameter key="remove_double_attributes" value="true"/>
+            <parameter key="join_type" value="inner"/>
+            <parameter key="use_id_attribute_as_key" value="true"/>
+            <list key="key_attributes"/>
+            <parameter key="keep_both_join_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="concurrency:join" compatibility="10.5.000" expanded="true" height="82" name="Join (2)" width="90" x="1117" y="187">
+            <parameter key="remove_double_attributes" value="true"/>
+            <parameter key="join_type" value="inner"/>
+            <parameter key="use_id_attribute_as_key" value="true"/>
+            <list key="key_attributes"/>
+            <parameter key="keep_both_join_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="10.5.000" expanded="true" height="103" name="Filter Examples (2)" width="90" x="1117" y="34">
+            <parameter key="parameter_expression" value=""/>
+            <parameter key="condition_class" value="custom_filters"/>
+            <parameter key="invert_filter" value="false"/>
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="ISF_Outlier.equals.Outlier"/>
+              <parameter key="filters_entry_key" value="outlier_flag.equals.Outlier"/>
+            </list>
+            <parameter key="filters_logic_and" value="true"/>
+            <parameter key="filters_check_metadata" value="true"/>
+          </operator>
+          <connect from_port="in 1" to_op="Nominal to Numerical" to_port="example set input"/>
+          <connect from_port="in 2" to_op="Join (2)" to_port="right"/>
+          <connect from_op="Nominal to Numerical" from_port="example set output" to_op="Remove Useless Attributes" to_port="example set input"/>
+          <connect from_op="Remove Useless Attributes" from_port="example set output" to_op="Multiply (4)" to_port="input"/>
+          <connect from_op="Multiply (4)" from_port="output 1" to_op="Select Attributes (3)" to_port="example set input"/>
+          <connect from_op="Multiply (4)" from_port="output 2" to_op="Detect Outlier (Isolation Forest)" to_port="exa"/>
+          <connect from_op="Multiply (4)" from_port="output 3" to_port="out 2"/>
+          <connect from_op="Detect Outlier (Isolation Forest)" from_port="exa" to_op="Generate Outlier Flag (2)" to_port="example set"/>
+          <connect from_op="Generate Outlier Flag (2)" from_port="example set" to_op="Select Attributes (5)" to_port="example set input"/>
+          <connect from_op="Select Attributes (3)" from_port="example set output" to_op="Detect Outlier (LOF)" to_port="example set input"/>
+          <connect from_op="Select Attributes (5)" from_port="example set output" to_op="Set Role (2)" to_port="example set input"/>
+          <connect from_op="Set Role (2)" from_port="example set output" to_op="Rename (2)" to_port="example set input"/>
+          <connect from_op="Rename (2)" from_port="example set output" to_op="Join" to_port="right"/>
+          <connect from_op="Detect Outlier (LOF)" from_port="example set output" to_op="Generate Outlier Flag" to_port="example set"/>
+          <connect from_op="Generate Outlier Flag" from_port="example set" to_op="Set Role (3)" to_port="example set input"/>
+          <connect from_op="Set Role (3)" from_port="example set output" to_op="Select Attributes (4)" to_port="example set input"/>
+          <connect from_op="Select Attributes (4)" from_port="example set output" to_op="Join" to_port="left"/>
+          <connect from_op="Join" from_port="join" to_op="Join (2)" to_port="left"/>
+          <connect from_op="Join (2)" from_port="join" to_op="Filter Examples (2)" to_port="example set input"/>
+          <connect from_op="Filter Examples (2)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="source_in 3" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <portSpacing port="sink_out 3" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="10.5.000" expanded="true" height="82" name="Knn" width="90" x="581" y="493">
+        <process expanded="true">
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (6)" width="90" x="45" y="34">
+            <parameter key="type" value="exclude attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value="Report_Date"/>
+            <parameter key="select_subset" value="␞Precinct_Code␞Report_Date␞Start_Date"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+          </operator>
+          <operator activated="true" class="nominal_to_numerical" compatibility="10.5.000" expanded="true" height="103" name="Nominal to Numerical (2)" width="90" x="179" y="34">
+            <parameter key="return_preprocessing_model" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="nominal"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="file_path"/>
+            <parameter key="block_type" value="single_value"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="single_value"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="coding_type" value="dummy coding"/>
+            <parameter key="use_comparison_groups" value="false"/>
+            <list key="comparison_groups"/>
+            <parameter key="unexpected_value_handling" value="all 0 and warning"/>
+            <parameter key="use_underscore_in_name" value="false"/>
+          </operator>
+          <operator activated="true" class="blending:split_data" compatibility="10.5.000" expanded="true" height="103" name="Split Data" width="90" x="313" y="34">
+            <enumeration key="partitions">
+              <parameter key="ratio" value="0.7"/>
+              <parameter key="ratio" value="0.3"/>
+            </enumeration>
+            <parameter key="sampling_type" value="automatic"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+          </operator>
+          <operator activated="true" class="k_nn" compatibility="10.5.000" expanded="true" height="82" name="k-NN" width="90" x="447" y="34">
+            <parameter key="k" value="10"/>
+            <parameter key="weighted_vote" value="true"/>
+            <parameter key="measure_types" value="MixedMeasures"/>
+            <parameter key="mixed_measure" value="MixedEuclideanDistance"/>
+            <parameter key="nominal_measure" value="NominalDistance"/>
+            <parameter key="numerical_measure" value="EuclideanDistance"/>
+            <parameter key="divergence" value="GeneralizedIDivergence"/>
+            <parameter key="kernel_type" value="radial"/>
+            <parameter key="kernel_gamma" value="1.0"/>
+            <parameter key="kernel_sigma1" value="1.0"/>
+            <parameter key="kernel_sigma2" value="0.0"/>
+            <parameter key="kernel_sigma3" value="2.0"/>
+            <parameter key="kernel_degree" value="3.0"/>
+            <parameter key="kernel_shift" value="1.0"/>
+            <parameter key="kernel_a" value="1.0"/>
+            <parameter key="kernel_b" value="0.0"/>
+          </operator>
+          <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model (3)" width="90" x="581" y="34">
+            <list key="application_parameters"/>
+          </operator>
+          <operator activated="true" class="performance_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance" width="90" x="715" y="34">
+            <parameter key="main_criterion" value="first"/>
+            <parameter key="accuracy" value="true"/>
+            <parameter key="classification_error" value="false"/>
+            <parameter key="kappa" value="false"/>
+            <parameter key="weighted_mean_recall" value="false"/>
+            <parameter key="weighted_mean_precision" value="false"/>
+            <parameter key="spearman_rho" value="false"/>
+            <parameter key="kendall_tau" value="false"/>
+            <parameter key="absolute_error" value="false"/>
+            <parameter key="relative_error" value="false"/>
+            <parameter key="relative_error_lenient" value="false"/>
+            <parameter key="relative_error_strict" value="false"/>
+            <parameter key="normalized_absolute_error" value="false"/>
+            <parameter key="root_mean_squared_error" value="false"/>
+            <parameter key="root_relative_squared_error" value="false"/>
+            <parameter key="squared_error" value="false"/>
+            <parameter key="correlation" value="false"/>
+            <parameter key="squared_correlation" value="false"/>
+            <parameter key="cross-entropy" value="false"/>
+            <parameter key="margin" value="false"/>
+            <parameter key="soft_margin_loss" value="false"/>
+            <parameter key="logistic_loss" value="false"/>
+            <parameter key="skip_undefined_labels" value="true"/>
+            <parameter key="use_example_weights" value="true"/>
+            <list key="class_weights"/>
+          </operator>
+          <connect from_port="in 1" to_op="Select Attributes (6)" to_port="example set input"/>
+          <connect from_op="Select Attributes (6)" from_port="example set output" to_op="Nominal to Numerical (2)" to_port="example set input"/>
+          <connect from_op="Nominal to Numerical (2)" from_port="example set output" to_op="Split Data" to_port="example set"/>
+          <connect from_op="Split Data" from_port="partition 1" to_op="k-NN" to_port="training set"/>
+          <connect from_op="Split Data" from_port="partition 2" to_op="Apply Model (3)" to_port="unlabelled data"/>
+          <connect from_op="k-NN" from_port="model" to_op="Apply Model (3)" to_port="model"/>
+          <connect from_op="Apply Model (3)" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
+          <connect from_op="Performance" from_port="performance" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="concurrency:cross_validation" compatibility="10.5.000" expanded="true" height="145" name="Cross Validation - RF" width="90" x="581" y="340">
+        <parameter key="split_on_batch_attribute" value="false"/>
+        <parameter key="leave_one_out" value="false"/>
+        <parameter key="number_of_folds" value="10"/>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="concurrency:parallel_random_forest" compatibility="10.5.000" expanded="true" height="103" name="Random Forest" width="90" x="179" y="34">
+            <parameter key="number_of_trees" value="100"/>
+            <parameter key="criterion" value="gain_ratio"/>
+            <parameter key="maximal_depth" value="10"/>
+            <parameter key="apply_pruning" value="false"/>
+            <parameter key="confidence" value="0.1"/>
+            <parameter key="apply_prepruning" value="false"/>
+            <parameter key="minimal_gain" value="0.01"/>
+            <parameter key="minimal_leaf_size" value="2"/>
+            <parameter key="minimal_size_for_split" value="4"/>
+            <parameter key="number_of_prepruning_alternatives" value="3"/>
+            <parameter key="random_splits" value="false"/>
+            <parameter key="guess_subset_ratio" value="true"/>
+            <parameter key="subset_ratio" value="0.2"/>
+            <parameter key="voting_strategy" value="confidence vote"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+            <parameter key="enable_parallel_execution" value="true"/>
+          </operator>
+          <connect from_port="training set" to_op="Random Forest" to_port="training set"/>
+          <connect from_op="Random Forest" from_port="model" to_port="model"/>
+          <portSpacing port="source_training set" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_through 1" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model" width="90" x="45" y="34">
+            <list key="application_parameters"/>
+          </operator>
+          <operator activated="true" class="performance_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance RF" width="90" x="246" y="34">
+            <parameter key="main_criterion" value="first"/>
+            <parameter key="accuracy" value="true"/>
+            <parameter key="classification_error" value="false"/>
+            <parameter key="kappa" value="false"/>
+            <parameter key="weighted_mean_recall" value="false"/>
+            <parameter key="weighted_mean_precision" value="false"/>
+            <parameter key="spearman_rho" value="false"/>
+            <parameter key="kendall_tau" value="false"/>
+            <parameter key="absolute_error" value="false"/>
+            <parameter key="relative_error" value="false"/>
+            <parameter key="relative_error_lenient" value="false"/>
+            <parameter key="relative_error_strict" value="false"/>
+            <parameter key="normalized_absolute_error" value="false"/>
+            <parameter key="root_mean_squared_error" value="false"/>
+            <parameter key="root_relative_squared_error" value="false"/>
+            <parameter key="squared_error" value="false"/>
+            <parameter key="correlation" value="false"/>
+            <parameter key="squared_correlation" value="false"/>
+            <parameter key="cross-entropy" value="false"/>
+            <parameter key="margin" value="false"/>
+            <parameter key="soft_margin_loss" value="false"/>
+            <parameter key="logistic_loss" value="false"/>
+            <parameter key="skip_undefined_labels" value="true"/>
+            <parameter key="use_example_weights" value="true"/>
+            <list key="class_weights"/>
+          </operator>
+          <connect from_port="model" to_op="Apply Model" to_port="model"/>
+          <connect from_port="test set" to_op="Apply Model" to_port="unlabelled data"/>
+          <connect from_op="Apply Model" from_port="labelled data" to_op="Performance RF" to_port="labelled data"/>
+          <connect from_op="Performance RF" from_port="performance" to_port="performance 1"/>
+          <connect from_op="Performance RF" from_port="example set" to_port="test set results"/>
+          <portSpacing port="source_model" spacing="0"/>
+          <portSpacing port="source_test set" spacing="0"/>
+          <portSpacing port="source_through 1" spacing="0"/>
+          <portSpacing port="sink_test set results" spacing="0"/>
+          <portSpacing port="sink_performance 1" spacing="0"/>
+          <portSpacing port="sink_performance 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="concurrency:cross_validation" compatibility="10.5.000" expanded="true" height="145" name="Cross Validation - DT" width="90" x="581" y="187">
+        <parameter key="split_on_batch_attribute" value="false"/>
+        <parameter key="leave_one_out" value="false"/>
+        <parameter key="number_of_folds" value="10"/>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="concurrency:parallel_decision_tree" compatibility="10.5.000" expanded="true" height="103" name="Decision Tree" width="90" x="179" y="34">
+            <parameter key="criterion" value="gain_ratio"/>
+            <parameter key="maximal_depth" value="10"/>
+            <parameter key="apply_pruning" value="true"/>
+            <parameter key="confidence" value="0.5"/>
+            <parameter key="apply_prepruning" value="true"/>
+            <parameter key="minimal_gain" value="0.02"/>
+            <parameter key="minimal_leaf_size" value="1"/>
+            <parameter key="minimal_size_for_split" value="4"/>
+            <parameter key="number_of_prepruning_alternatives" value="3"/>
+          </operator>
+          <connect from_port="training set" to_op="Decision Tree" to_port="training set"/>
+          <connect from_op="Decision Tree" from_port="model" to_port="model"/>
+          <portSpacing port="source_training set" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_through 1" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model (2)" width="90" x="112" y="34">
+            <list key="application_parameters"/>
+          </operator>
+          <operator activated="true" class="performance_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance Decision Tree" width="90" x="313" y="34">
+            <parameter key="main_criterion" value="first"/>
+            <parameter key="accuracy" value="true"/>
+            <parameter key="classification_error" value="false"/>
+            <parameter key="kappa" value="false"/>
+            <parameter key="weighted_mean_recall" value="false"/>
+            <parameter key="weighted_mean_precision" value="false"/>
+            <parameter key="spearman_rho" value="false"/>
+            <parameter key="kendall_tau" value="false"/>
+            <parameter key="absolute_error" value="false"/>
+            <parameter key="relative_error" value="false"/>
+            <parameter key="relative_error_lenient" value="false"/>
+            <parameter key="relative_error_strict" value="false"/>
+            <parameter key="normalized_absolute_error" value="false"/>
+            <parameter key="root_mean_squared_error" value="false"/>
+            <parameter key="root_relative_squared_error" value="false"/>
+            <parameter key="squared_error" value="false"/>
+            <parameter key="correlation" value="false"/>
+            <parameter key="squared_correlation" value="false"/>
+            <parameter key="cross-entropy" value="false"/>
+            <parameter key="margin" value="false"/>
+            <parameter key="soft_margin_loss" value="false"/>
+            <parameter key="logistic_loss" value="false"/>
+            <parameter key="skip_undefined_labels" value="true"/>
+            <parameter key="use_example_weights" value="true"/>
+            <list key="class_weights"/>
+          </operator>
+          <connect from_port="model" to_op="Apply Model (2)" to_port="model"/>
+          <connect from_port="test set" to_op="Apply Model (2)" to_port="unlabelled data"/>
+          <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance Decision Tree" to_port="labelled data"/>
+          <connect from_op="Performance Decision Tree" from_port="performance" to_port="performance 1"/>
+          <connect from_op="Performance Decision Tree" from_port="example set" to_port="test set results"/>
+          <portSpacing port="source_model" spacing="0"/>
+          <portSpacing port="source_test set" spacing="0"/>
+          <portSpacing port="source_through 1" spacing="0"/>
+          <portSpacing port="sink_test set results" spacing="0"/>
+          <portSpacing port="sink_performance 1" spacing="0"/>
+          <portSpacing port="sink_performance 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply (2)" width="90" x="715" y="85"/>
+      <operator activated="true" class="subprocess" compatibility="10.5.000" expanded="true" height="145" name="Clustering (2)" width="90" x="916" y="238">
+        <process expanded="true">
+          <operator activated="true" class="concurrency:k_means" compatibility="10.5.000" expanded="true" height="82" name="Clustering (3)" width="90" x="112" y="238">
+            <parameter key="add_cluster_attribute" value="true"/>
+            <parameter key="add_as_label" value="false"/>
+            <parameter key="remove_unlabeled" value="false"/>
+            <parameter key="k" value="11"/>
+            <parameter key="max_runs" value="10"/>
+            <parameter key="determine_good_start_values" value="true"/>
+            <parameter key="measure_types" value="BregmanDivergences"/>
+            <parameter key="mixed_measure" value="MixedEuclideanDistance"/>
+            <parameter key="nominal_measure" value="NominalDistance"/>
+            <parameter key="numerical_measure" value="EuclideanDistance"/>
+            <parameter key="divergence" value="SquaredEuclideanDistance"/>
+            <parameter key="kernel_type" value="radial"/>
+            <parameter key="kernel_gamma" value="1.0"/>
+            <parameter key="kernel_sigma1" value="1.0"/>
+            <parameter key="kernel_sigma2" value="0.0"/>
+            <parameter key="kernel_sigma3" value="2.0"/>
+            <parameter key="kernel_degree" value="3.0"/>
+            <parameter key="kernel_shift" value="1.0"/>
+            <parameter key="kernel_a" value="1.0"/>
+            <parameter key="kernel_b" value="0.0"/>
+            <parameter key="max_optimization_steps" value="100"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply (6)" width="90" x="246" y="289"/>
+          <operator activated="true" class="aggregate" compatibility="10.5.000" expanded="true" height="82" name="Aggregate (2)" width="90" x="447" y="238">
+            <parameter key="use_default_aggregation" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="default_aggregation_function" value="average"/>
+            <list key="aggregation_attributes">
+              <parameter key="cluster" value="count"/>
+            </list>
+            <parameter key="group_by_attributes" value="|cluster"/>
+            <parameter key="count_all_combinations" value="false"/>
+            <parameter key="only_distinct" value="false"/>
+            <parameter key="ignore_missings" value="true"/>
+          </operator>
+          <operator activated="true" class="concurrency:join" compatibility="10.5.000" expanded="true" height="82" name="Join (4)" width="90" x="648" y="289">
+            <parameter key="remove_double_attributes" value="true"/>
+            <parameter key="join_type" value="inner"/>
+            <parameter key="use_id_attribute_as_key" value="false"/>
+            <list key="key_attributes">
+              <parameter key="cluster" value="cluster"/>
+            </list>
+            <parameter key="keep_both_join_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="10.5.000" expanded="true" height="103" name="Filter Examples (3)" width="90" x="782" y="289">
+            <parameter key="parameter_string" value="count(cluster)&lt;=449"/>
+            <parameter key="parameter_expression" value=""/>
+            <parameter key="condition_class" value="attribute_value_filter"/>
+            <parameter key="invert_filter" value="false"/>
+            <list key="filters_list"/>
+            <parameter key="filters_logic_and" value="true"/>
+            <parameter key="filters_check_metadata" value="true"/>
+          </operator>
+          <operator activated="true" class="concurrency:loop_parameters" compatibility="10.5.000" expanded="true" height="103" name="Loop Parameters (2)" width="90" x="447" y="85">
+            <list key="parameters">
+              <parameter key="Clustering (4).k" value="[2.0;12.0;8;linear]"/>
+            </list>
+            <parameter key="error_handling" value="fail on error"/>
+            <parameter key="log_performance" value="true"/>
+            <parameter key="log_all_criteria" value="false"/>
+            <parameter key="synchronize" value="false"/>
+            <parameter key="enable_parallel_execution" value="true"/>
+            <process expanded="true">
+              <operator activated="true" class="concurrency:k_means" compatibility="10.5.000" expanded="true" height="82" name="Clustering (4)" width="90" x="313" y="34">
+                <parameter key="add_cluster_attribute" value="true"/>
+                <parameter key="add_as_label" value="false"/>
+                <parameter key="remove_unlabeled" value="false"/>
+                <parameter key="k" value="5"/>
+                <parameter key="max_runs" value="10"/>
+                <parameter key="determine_good_start_values" value="true"/>
+                <parameter key="measure_types" value="BregmanDivergences"/>
+                <parameter key="mixed_measure" value="MixedEuclideanDistance"/>
+                <parameter key="nominal_measure" value="NominalDistance"/>
+                <parameter key="numerical_measure" value="EuclideanDistance"/>
+                <parameter key="divergence" value="SquaredEuclideanDistance"/>
+                <parameter key="kernel_type" value="radial"/>
+                <parameter key="kernel_gamma" value="1.0"/>
+                <parameter key="kernel_sigma1" value="1.0"/>
+                <parameter key="kernel_sigma2" value="0.0"/>
+                <parameter key="kernel_sigma3" value="2.0"/>
+                <parameter key="kernel_degree" value="3.0"/>
+                <parameter key="kernel_shift" value="1.0"/>
+                <parameter key="kernel_a" value="1.0"/>
+                <parameter key="kernel_b" value="0.0"/>
+                <parameter key="max_optimization_steps" value="100"/>
+                <parameter key="use_local_random_seed" value="false"/>
+                <parameter key="local_random_seed" value="1992"/>
+              </operator>
+              <operator activated="true" class="cluster_distance_performance" compatibility="10.5.000" expanded="true" height="103" name="Performance (3)" width="90" x="514" y="34">
+                <parameter key="main_criterion" value="Avg. within centroid distance"/>
+                <parameter key="main_criterion_only" value="false"/>
+                <parameter key="normalize" value="false"/>
+                <parameter key="maximize" value="false"/>
+              </operator>
+              <connect from_port="input 1" to_op="Clustering (4)" to_port="example set"/>
+              <connect from_op="Clustering (4)" from_port="cluster model" to_op="Performance (3)" to_port="cluster model"/>
+              <connect from_op="Clustering (4)" from_port="clustered set" to_op="Performance (3)" to_port="example set"/>
+              <connect from_op="Performance (3)" from_port="performance" to_port="performance"/>
+              <connect from_op="Performance (3)" from_port="example set" to_port="output 1"/>
+              <connect from_op="Performance (3)" from_port="cluster model" to_port="output 2"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_performance" spacing="0"/>
+              <portSpacing port="sink_output 1" spacing="0"/>
+              <portSpacing port="sink_output 2" spacing="0"/>
+              <portSpacing port="sink_output 3" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="in 1" to_op="Clustering (3)" to_port="example set"/>
+          <connect from_port="in 2" to_op="Loop Parameters (2)" to_port="input 1"/>
+          <connect from_op="Clustering (3)" from_port="cluster model" to_port="out 4"/>
+          <connect from_op="Clustering (3)" from_port="clustered set" to_op="Multiply (6)" to_port="input"/>
+          <connect from_op="Multiply (6)" from_port="output 1" to_op="Aggregate (2)" to_port="example set input"/>
+          <connect from_op="Multiply (6)" from_port="output 2" to_op="Join (4)" to_port="right"/>
+          <connect from_op="Aggregate (2)" from_port="example set output" to_op="Join (4)" to_port="left"/>
+          <connect from_op="Join (4)" from_port="join" to_op="Filter Examples (3)" to_port="example set input"/>
+          <connect from_op="Filter Examples (3)" from_port="example set output" to_port="out 1"/>
+          <connect from_op="Loop Parameters (2)" from_port="output 1" to_port="out 2"/>
+          <connect from_op="Loop Parameters (2)" from_port="output 2" to_port="out 3"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="source_in 3" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <portSpacing port="sink_out 3" spacing="0"/>
+          <portSpacing port="sink_out 4" spacing="0"/>
+          <portSpacing port="sink_out 5" spacing="0"/>
+        </process>
+      </operator>
+      <connect from_op="Retrieve NYPD_Complaint_Data_Current__Year_To_Date__20241106" from_port="output" to_op="Filter Examples" to_port="example set input"/>
+      <connect from_op="Filter Examples" from_port="example set output" to_op="Preprocessing" to_port="in 1"/>
+      <connect from_op="Preprocessing" from_port="out 1" to_op="Multiply" to_port="input"/>
+      <connect from_op="Preprocessing" from_port="out 2" to_op="Outlier Detection" to_port="in 2"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Outlier Detection" to_port="in 1"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Cross Validation - DT" to_port="example set"/>
+      <connect from_op="Multiply" from_port="output 3" to_op="Cross Validation - RF" to_port="example set"/>
+      <connect from_op="Multiply" from_port="output 4" to_op="Knn" to_port="in 1"/>
+      <connect from_op="Multiply" from_port="output 5" to_op="Association" to_port="in 1"/>
+      <connect from_op="Association" from_port="out 1" to_port="result 9"/>
+      <connect from_op="Outlier Detection" from_port="out 1" to_port="result 8"/>
+      <connect from_op="Outlier Detection" from_port="out 2" to_op="Multiply (2)" to_port="input"/>
+      <connect from_op="Knn" from_port="out 1" to_port="result 5"/>
+      <connect from_op="Cross Validation - RF" from_port="performance 1" to_port="result 3"/>
+      <connect from_op="Cross Validation - DT" from_port="model" to_port="result 2"/>
+      <connect from_op="Cross Validation - DT" from_port="performance 1" to_port="result 1"/>
+      <connect from_op="Multiply (2)" from_port="output 1" to_op="Clustering (2)" to_port="in 2"/>
+      <connect from_op="Multiply (2)" from_port="output 2" to_op="Clustering (2)" to_port="in 1"/>
+      <connect from_op="Clustering (2)" from_port="out 1" to_port="result 4"/>
+      <connect from_op="Clustering (2)" from_port="out 2" to_port="result 6"/>
+      <connect from_op="Clustering (2)" from_port="out 3" to_port="result 7"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <portSpacing port="sink_result 5" spacing="0"/>
+      <portSpacing port="sink_result 6" spacing="0"/>
+      <portSpacing port="sink_result 7" spacing="0"/>
+      <portSpacing port="sink_result 8" spacing="0"/>
+      <portSpacing port="sink_result 9" spacing="0"/>
+      <portSpacing port="sink_result 10" spacing="0"/>
+    </process>
+  </operator>
+</process>
